@@ -1,16 +1,18 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask import request
 
 api = Namespace('users', description='User operations')
 
 # Define the user model for input validation and documentation
 user_model = api.model('User', {
-    'first_name': fields.String(required=True, description='First name of the user'),
-    'last_name': fields.String(required=True, description='Last name of the user'),
-    'email': fields.String(required=True, description='Email of the user')
+    'first_name': fields.String(required=True, description="User's first name"),
+    'last_name': fields.String(required=True, description="User's last name"),
+    'email': fields.String(required=True, description="User's email address"),
+    'password': fields.String(required=True, description="User's password")
 })
 
-@api.route('/')
+@api.route('/api/v1/users/')
 class UserList(Resource):
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created')
@@ -19,6 +21,9 @@ class UserList(Resource):
     def post(self):
         """Register a new user"""
         user_data = api.payload
+
+        hashed_password = hash_password(user_data['password'])
+        
 
         # Simulate email uniqueness check (to be replaced by real validation with persistence)
         existing_user = facade.get_user_by_email(user_data['email'])

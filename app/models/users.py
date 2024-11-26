@@ -9,3 +9,11 @@ class User(BaseModel):
         self.is_admin
         self.created_at
         self.updated_at
+
+def hash_password(self, password):
+    """Hashes the password before storing it."""
+    self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+def verify_password(self, password):
+    """Verifies if the provided password matches the hashed password."""
+    return bcrypt.check_password_hash(self.password, password)
